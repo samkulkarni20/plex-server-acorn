@@ -1,0 +1,49 @@
+args: {
+  scale: 1
+  plexserver_claim: "claim-YFMxtgpbvhUEGxhz4Fha"
+}
+
+containers: {
+  plexserver: {
+    scale: args.scale
+    env: {
+      "PLEX_CLAIM": args.plexserver_claim
+      "PGID": "1000"
+      "PUID": "1000"
+      "VERSION": "latest"
+      "TZ": "Asia/Kolkata"
+    }
+    image: "ghcr.io/linuxserver/plex"
+    ports: {
+      publish: [
+        "32400/tcp",
+        "32469/tcp",
+        "3005/tcp",
+        "8324/tcp",
+        "1900/udp",
+        "5354:5353/udp",
+        "32410/udp",
+        "32412/udp",
+        "32413/udp",
+        "32414/udp"
+      ]
+    }
+    dirs: {
+      "/config": "volume://plexserver-pv-nfs-config"
+      "/data": "volume://plexserver-pv-nfs-data"
+    }
+  }
+}
+
+volumes: {
+  "plexserver-pv-nfs-config": {
+    size: 1G
+    class: "nfs-conf"
+    accessModes: "readWriteMany"
+  }
+  "plexserver-pv-nfs-data": {
+    size: 300G
+    class: "nfs-data"
+    accessModes: "readWriteMany"
+  }
+}
